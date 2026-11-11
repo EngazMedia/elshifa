@@ -24,7 +24,7 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {getFirestore,collection,addDoc,onSnapshot,doc,getDoc,setDoc,updateDoc,query,where,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 // ====== ضع بيانات مشروع Firebase هنا ======
-const cfg={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT",appId:"YOUR_APP_ID"};
+const cfg={apiKey:"AIzaSyBPjZanquqAUL9nW0r3DcKFnuRbyL0Jx3w",authDomain:"elshifa.firebaseapp.com",projectId:"elshifa",appId:"1:372354048107:web:d34f96c8a5bdecac51d12e"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 const $=s=>document.querySelector(s),esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ITEMS=["بلاستر","رشاش","ميكروكروم","بيتادين","دريسنج","رباط ضاغط"];
@@ -58,7 +58,7 @@ const ambHtml=()=>D("ambulances").map(a=>`<div class="c r">🚑 <b>${esc(a.name)
 const appsHtml=()=>`<h2>الحجوزات</h2>`+(D("appointments").slice().sort((a,b)=>(a.when>b.when?1:-1)).map(a=>`<div class="c"><b>${esc(a.name)}</b> · ${esc(a.phone)}<div class="m">${esc(a.doctor)} · ${esc(a.when)}</div></div>`).join("")||`<div class="c m">لا توجد حجوزات</div>`);
 const supHtml=()=>{const s=D("supplies");return `<h2>سجل المستلزمات</h2><div class="c x"><table><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr>${s.map(x=>`<tr><td>${esc(x.item)}</td><td>${x.qty}</td><td>${x.price}</td><td>${x.qty*x.price}</td></tr>`).join("")}</table></div>`};
 const FORM={
-home:()=>`<h2>أطباء المركز</h2>${doctorsHtml()}<h2>احجز موعد</h2><div class="c"><label>الاسم</label><input id="gn"><label>رقم الموبايل</label><input id="gp" type="tel" dir="ltr"><label>الدكتور</label><select id="gd">${D("doctors").map(d=>`<option>${esc(d.name)}</option>`).join("")}</select><label>الموعد</label><input id="gw" type="datetime-local"><button class="b" id="gb">تأكيد الحجز</button><div class="m" id="gm"></div></div><h2>الإسعاف</h2>${ambHtml()}`,
+home:()=>`<h2>أطباء المركز</h2><div id="dl"></div><h2>احجز موعد</h2><div class="c"><label>الاسم</label><input id="gn"><label>رقم الموبايل</label><input id="gp" type="tel" dir="ltr"><label>الدكتور</label><select id="gd"></select><label>الموعد</label><input id="gw" type="datetime-local"><button class="b" id="gb">تأكيد الحجز</button><div class="m" id="gm"></div></div><h2>الإسعاف</h2><div id="al"></div>`,
 login:()=>`<div class="c"><h2>${S.reg?"حساب جديد":"تسجيل الدخول"}</h2><label>الإيميل (Gmail)</label><input id="le" type="email" dir="ltr"><label>الباسورد</label><input id="lp" type="password" dir="ltr"><button class="b" id="lb">${S.reg?"إنشاء حساب":"دخول"}</button> <button class="b l" style="color:#0a6358;background:#d6efeb" id="ls">${S.reg?"عندي حساب":"حساب جديد"}</button><div class="e" id="lm"></div></div>`,
 dash:()=>`<h2>ملخص اليوم</h2><div class="st"><div><b id="n1">0</b>حجوزات</div><div><b id="n2">0</b>كشوفات</div><div><b id="n3">0</b>مستلزمات</div><div><b id="n4">0</b>مستلزمات (ج)</div></div>`,
 doctors:()=>`<h2>إضافة دكتور</h2><div class="c"><label>الاسم</label><input id="dn"><label>التخصص</label><input id="ds"><label>الأيام</label><input id="dd"><label>الساعات</label><input id="dh"><button class="b" id="db">إضافة</button></div>`,
@@ -67,7 +67,7 @@ sup:()=>`<h2>تسجيل مستلزم</h2><div class="c"><label>الصنف</label
 dx:()=>`<h2>تشخيص جديد</h2><div class="c"><label>اسم المريض</label><input id="xp"><label>التشخيص</label><textarea id="xd" rows="2"></textarea><label>الإجراءات</label><textarea id="xi" rows="2"></textarea><label>الأدوية</label><textarea id="xm" rows="2"></textarea><button class="b" id="xb">حفظ</button></div>`,
 pend:()=>`<div class="c">حسابك قيد المراجعة. سيحدد الأدمن صلاحيتك قريبًا.</div>`,apps:()=>"",staff:()=>""};
 const LIST={
-home:()=>{},doctors:()=>doctorsHtml(),amb:()=>ambHtml(),apps:appsHtml,sup:supHtml,
+home:()=>{const dl=$("#dl"),al=$("#al"),g=$("#gd");if(dl)dl.innerHTML=doctorsHtml();if(al)al.innerHTML=ambHtml()||`<div class="c m">لا توجد سيارات</div>`;if(g){const v=g.value;g.innerHTML=D("doctors").map(d=>`<option>${esc(d.name)}</option>`).join("");if(v)g.value=v}return ""},doctors:()=>doctorsHtml(),amb:()=>ambHtml(),apps:appsHtml,sup:supHtml,
 dash:()=>{const a=D("appointments").length,x=D("diagnoses").length,s=D("supplies");[a,x,s.length,s.reduce((t,i)=>t+i.qty*i.price,0)].forEach((v,i)=>{const e=$("#n"+(i+1));e&&(e.textContent=v)});return ""},
 dx:()=>D("diagnoses").map(x=>`<div class="c"><b>${esc(x.patient)}</b><div>${esc(x.dx)}</div><div class="m">${esc(x.proc)} · ${esc(x.meds)}</div></div>`).join(""),
 staff:()=>`<h2>الموظفون</h2>`+D("users").map(u=>`<div class="c r"><div class="g">${esc(u.email)}<div class="m">${RN[u.role]||u.role}</div></div><select data-u="${u.id}"><option value="">تغيير</option><option>admin</option><option>receptionist</option><option>doctor</option></select></div>`).join("")};
